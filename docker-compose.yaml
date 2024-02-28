@@ -1,0 +1,100 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postrgressql1
+    ports:
+      - "5432:5432"
+    networks:
+      - compose-bridge
+    environment:
+      -e POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+  zookeeper:
+    image: ubuntu/zookeeper:edge
+    container_name: zookeeper
+    networks:
+      - compose-bridge
+    ports:
+      - "2181:2181"
+  kafka:
+    image: ubuntu/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - compose-bridge
+    environment:
+      TZ: UTC
+      ZOOKEEPER_HOST: host.docker.internal
+  nginx:
+    build: ./nginx-config
+    container_name: nginx 
+    ports:
+      - "8080:80"
+    networks:
+      - compose-bridge
+    depends_on:
+      - cart-service
+      - address-service
+      - order-service
+      - payment-service
+      - products-service
+      - user-service
+  cart-service:
+    build: ./cart-service
+    container_name: cart-service
+    ports:
+      - "3002:3002"
+    networks:
+      - compose-bridge
+    depends_on:
+      - postgres
+  address-service:
+    build: ./address-service
+    container_name: address-service
+    ports:
+      - "3001:3001"
+    networks:
+      - compose-bridge
+    depends_on:
+      - postgres
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "3003:3003"
+    networks:
+      - compose-bridge
+    depends_on:
+      - postgres
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    ports:
+      - "3004:3004"
+    networks:
+      - compose-bridge
+    depends_on:
+      - postgres
+  products-service:
+    build: ./products-service
+    container_name: products-service
+    ports:
+      - "3005:3005"
+    networks:
+      - compose-bridge
+    depends_on:
+      - postgres    
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "3006:3006"
+    networks:
+      - compose-bridge
+    depends_on:
+      - postgres                      
+networks:
+    compose-bridge:
+      driver: bridge
