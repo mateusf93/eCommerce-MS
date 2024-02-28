@@ -1,13 +1,13 @@
 #!/bin/bash
 
 
-sleep 45 && npx prisma migrate dev --name init
+sleep 10 && npx prisma migrate deploy
 
 
-sleep 2 && npx prisma generate
+npx prisma generate
 
 
-sleep 2 && npm run build
+npm run build
 
 
-sleep 2 && npm run start
+npm run start
