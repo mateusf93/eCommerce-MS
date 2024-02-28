@@ -5,16 +5,15 @@ COPY package.json .
 
 RUN npm install
 
-# Set environment variables if needed
+
 ENV DATABASE_URL="postgresql://postgres:postgres@postrgressql1:5432/postgres?schema=public"
 
 COPY . .
 
-# Copy the entry point script
+
 COPY init.sh .
 
-# Make the entry point script executable
+
 RUN chmod +x init.sh
 
-# Set the entry point
 ENTRYPOINT ["/app/init.sh"]
